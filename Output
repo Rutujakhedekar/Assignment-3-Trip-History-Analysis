@@ -1,0 +1,54 @@
+Output :
+&gt; library(e1071)
+&gt; library(rpart)
+&gt; library(caTools)
+&gt; mydata&lt;-read.csv(file=&quot;201805-capitalbikeshare-tripdata.csv&quot;,header=TRUE, sep=&quot;,&quot;)
+&gt; #consider 
+&gt; subset_mydata&lt;-mydata[,c(1,4,6,9)]
+&gt; # %split
+&gt; temp_field&lt;-sample.split(subset_mydata,SplitRatio=0.9)
+&gt; train&lt;-subset(subset_mydata, temp_field=TRUE)
+&gt; test&lt;-subset(subset_mydata, temp_field=FALSE)
+&gt; summary(train)
+Duration Start.station.number End.station.number Member.type
+Min. : 60 Min. :31000 Min. :31000 Casual:102303
+1st Qu.: 441 1st Qu.:31208 1st Qu.:31212 Member:271812
+Median : 769 Median :31258 Median :31257
+Mean : 1262 Mean :31322 Mean :31322
+3rd Qu.: 1322 3rd Qu.:31500 3rd Qu.:31408
+Max. :86181 Max. :32227 Max. :32227
+&gt; summary(test)
+Duration Start.station.number End.station.number Member.type
+Min. : 60 Min. :31000 Min. :31000 Casual:102303
+1st Qu.: 441 1st Qu.:31208 1st Qu.:31212 Member:271812
+Median : 769 Median :31258 Median :31257
+Mean : 1262 Mean :31322 Mean :31322
+3rd Qu.: 1322 3rd Qu.:31500 3rd Qu.:31408
+Max. :86181 Max. :32227 Max. :32227
+&gt; head(train)
+Duration Start.station.number End.station.number Member.type
+1 679 31302 31307 Member
+2 578 31232 31609 Casual
+3 580 31232 31609 Casual
+4 606 31104 31509 Member
+5 582 31129 31118 Member
+6 175 31104 31117 Member
+&gt; head(test)
+Duration Start.station.number End.station.number Member.type
+1 679 31302 31307 Member
+2 578 31232 31609 Casual
+3 580 31232 31609 Casual
+4 606 31104 31509 Member
+5 582 31129 31118 Member
+6 175 31104 31117 Member
+&gt; fit&lt;-rpart(train$Member.type~.,data=train, method=&quot;class&quot;)
+&gt; #To display
+&gt; plot(fit)
+&gt; text(fit)
+&gt; #test data excluding the last column
+&gt; pred&lt;-predict(fit,newdata=test[-4],type=(&quot;class&quot;))
+&gt; #meanof true prediction
+&gt; mean(pred==test$Member.type)
+[1] 0.807773
+&gt; #display the output of the test data
+&gt; output&lt;-cbind(test, pred)

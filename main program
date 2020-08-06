@@ -1,0 +1,25 @@
+library(e1071)
+library(rpart)
+library(caTools)
+mydata&lt;-read.csv(file=&quot;201805-capitalbikeshare-tripdata.csv&quot;,header=TRUE, sep=&quot;,&quot;)
+#consider 
+subset_mydata&lt;-mydata[,c(1,4,6,9)]
+# %split
+temp_field&lt;-sample.split(subset_mydata,SplitRatio=0.9)
+train&lt;-subset(subset_mydata, temp_field=TRUE)
+test&lt;-subset(subset_mydata, temp_field=FALSE)
+summary(train)
+summary(test)
+head(train)
+head(test)
+fit&lt;-rpart(train$Member.type~.,data=train, method=&quot;class&quot;)
+#To display
+plot(fit)
+text(fit)
+#test data excluding the last column
+pred&lt;-predict(fit,newdata=test[-4],type=(&quot;class&quot;))
+#meanof true prediction
+mean(pred==test$Member.type)
+#display the output of the test data
+output&lt;-cbind(test, pred)
+View(output)
